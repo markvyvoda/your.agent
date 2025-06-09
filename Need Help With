@@ -1,0 +1,12 @@
+This file houses information on what I need help with. 
+
+Questions:
+1.) Is my approach correct?
+1.1.)
+To create an agent within Vertex that calls upon functions (e.g. Leading & Lagging Indicators). For example, I would have your.agent as a project in Vertex AI. I have no idea how to program this project which add several key factors. Factors such as agent characteristics, prime directives, etc. 
+1.2.) I think I will have to use agent score/weighing to help determine which way the agent will react. For example, based on the heirarchy of weight of prime directives, that will influence the agent. 
+2.) 
+
+
+
+Prime Directives: move to read.me
