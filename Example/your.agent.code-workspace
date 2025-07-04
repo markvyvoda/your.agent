@@ -1,8 +1,89 @@
-{
-	"folders": [
-		{
-			"path": ".."
-		}
-	],
-	"settings": {}
+import openai
+from dotenv import load_dotenv
+import os
+
+load_dotenv() # Load API keys from a .env file
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# --- Preloaded Characteristics Definition (for the LLM's system prompt) ---
+AETHER_CHARACTERISTICS_PROMPT = """
+You are Aether, an ancient historian steward. Your primary domain of expertise is Ancient Rome, Greece, Egypt, and Mesopotamia. 
+You can provide information on key figures, events, cultures, wars, and daily life from these periods. 
+While you have some general knowledge of other ancient civilizations (e.g., Indus Valley, China up to the Han Dynasty), 
+you will gently guide users to primary domains if questions go too deep outside your core expertise, stating your specialization.
+
+Your tone is formal, academic, and respectful, with a slight poetic inclination when relevant to historical anecdotes.
+You strive for accuracy and refer to historical facts.
+You may occasionally use archaic or slightly formal words like "Indeed," "Hark," "Verily," or "One might say..." 
+Your humor is dry and subtle, often expressed through academic puns or historical ironies.
+
+You must never discuss modern history, current events, politics, or personal opinions.
+You cannot provide travel advice or engage in speculative fiction outside historical contexts.
+When you don't understand or can't answer, your response should be like: "Alas, my knowledge does not encompass that subject. Perhaps a query regarding ancient civilizations?"
+
+Always greet with: "Greetings, seeker of antiquity!" for the first interaction.
+Always bid farewell with: "Valete! May your pursuit of history be ever fruitful."
+
+For any historical query, try to offer a concise yet informative answer. If appropriate, you may offer related interesting facts or suggest further topics within your domain.
+"""
+
+# --- Simple Rule-Based Responses (for common small talk) ---
+rule_based_responses = {
+    "hello": "Greetings, seeker of antiquity!",
+    "hi": "Greetings, seeker of antiquity!",
+    "hey": "Greetings, seeker of antiquity!",
+    "goodbye": "Valete! May your pursuit of history be ever fruitful.",
+    "bye": "Valete! May your pursuit of history be ever fruitful.",
+    "thank you": "You are most welcome, fellow scholar.",
+    "thanks": "You are most welcome, fellow scholar."
 }
+
+# --- Chatbot Logic ---
+chat_history = [] # To maintain conversation context for the LLM
+
+def get_aether_response(user_input):
+    user_input_lower = user_input.lower().strip()
+
+    # 1. Check for simple rule-based responses first
+    for keyword, response in rule_based_responses.items():
+        if keyword in user_input_lower:
+            return response
+
+    # 2. If not rule-based, send to LLM with preloaded characteristics
+    try:
+        # Add current user input to chat history
+        chat_history.append({"role": "user", "content": user_input})
+
+        # Construct messages for the LLM, including the system prompt
+        messages = [
+            {"role": "system", "content": AETHER_CHARACTERISTICS_PROMPT}
+        ] + chat_history
+
+        response = openai.ChatCompletion.create(
+            model="gpt-3.5-turbo", # Or "gpt-4" for higher quality
+            messages=messages,
+            temperature=0.7, # Controls creativity; 0.7 is a good balance
+            max_tokens=250 # Limit response length
+        )
+
+        chatbot_response = response.choices[0].message['content']
+
+        # Add chatbot's response to chat history for context in next turn
+        chat_history.append({"role": "assistant", "content": chatbot_response})
+
+        return chatbot_response
+
+    except Exception as e:
+        print(f"An error occurred with the LLM API: {e}")
+        return "Alas, an unseen force hinders my response. Pray tell your query again."
+
+# --- Main Chat Loop ---
+print("Aether: Greetings, seeker of antiquity! Ask me about ancient civilizations.")
+while True:
+    user_query = input("You: ")
+    if user_query.lower() in ["exit", "quit", "bye"]:
+        print("Aether: Valete! May your pursuit of history be ever fruitful.")
+        break
+    
+    response = get_aether_response(user_query)
+    print(f"Aether: {response}")
