@@ -7,3 +7,44 @@ To create an agent within Vertex that calls upon functions (e.g. Leading & Laggi
 1.2.) I think I will have to use agent score/weighing to help determine which way the agent will react. For example, based on the heirarchy of weight of prime directives, that will influence the agent. 
 2.) In the example, wow will this agent be able to access the parameters I set for it?
 2.1.) Prime Directives
+
+
+7/4/2025. AI answers:
+Here are answers to your questions based on the content of Example/mark.agent and your repository’s context:
+
+1. Is my approach correct?
+1.1 To create an agent within Vertex that calls upon functions (e.g. Leading & Lagging Indicators). For example, I would have your.agent as a project in Vertex AI. I have no idea how to program this project.
+Answer:
+Your approach is conceptually sound. Vertex AI is designed to build, deploy, and manage agents (including conversational, task, and custom agents) that can invoke functions or external tools. To implement this, you’ll typically:
+
+Define your agent and its logic (what functions it can call, what kinds of inputs/outputs it expects).
+Use Vertex AI’s tools (such as Generative AI Studio, or the Vertex AI SDK) to create and deploy your agent.
+Write code (usually in Python) for the functions your agent will call (e.g., Leading & Lagging Indicators).
+Integrate these functions with the agent using function calling features, Cloud Functions, or custom endpoints.
+If you haven’t programmed a Vertex AI agent before, Google’s documentation and tutorials on Vertex AI Agents and Function Calling will be helpful. You’ll need to get familiar with concepts like “tools,” “actions,” or “function calling” in the context of Vertex’s agent framework.
+
+1.2 I think I will have to use agent score/weighing to help determine which way the agent will react. For example, based on the hierarchy of weight of prime directives, that will influence the agent’s behavior.
+Answer:
+Yes, using scoring or weighing mechanisms is a common and effective strategy. In agent design, especially when you have multiple directives or goals, assigning weights or priorities helps resolve conflicts and guide decisions.
+
+"Prime Directives" can be encoded with higher weights.
+Scoring can be dynamic (adjusted at runtime based on context) or static.
+Ensure your agent logic checks directive weights before taking actions.
+You can implement this in code by storing directive weights in dictionaries/objects and evaluating them as part of your agent’s decision process.
+
+2. In the example, how will this agent be able to access the parameters I set for it?
+2.1 Prime Directives
+Answer:
+Parameters like “Prime Directives” are typically passed to agents as part of their configuration or context. In practice:
+
+Store your parameters in a config file, database, environment variable, or as part of the agent’s initialization data.
+When creating the agent in Vertex AI, you can pass these parameters directly or load them at startup.
+The agent’s code should be designed to read and use these parameters during operation, influencing decisions as described above.
+For instance, in Python, you might have:
+
+Python
+agent_config = {
+    "prime_directives": ["safety", "accuracy", "efficiency"],
+    "directive_weights": {"safety": 10, "accuracy": 8, "efficiency": 5}
+}
+and your agent’s logic would reference these values.
